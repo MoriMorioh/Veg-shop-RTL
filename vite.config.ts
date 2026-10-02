@@ -3,7 +3,7 @@ import react from '@vitejs/plugin-react';
 
 export default defineConfig({
   plugins: [react()],
-  base: '/Veg-shop/',
+  base: '/Veg-shop-RTL/',
   test: {
     globals: true,
     environment: 'jsdom',
