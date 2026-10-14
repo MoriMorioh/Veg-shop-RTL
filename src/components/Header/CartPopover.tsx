@@ -1,5 +1,5 @@
-import { Popover, Button, Text, Stack, Group, Image, ActionIcon } from '@mantine/core';
-import { IconShoppingCart, IconTrash } from '@tabler/icons-react';
+import { Popover, Button, Text, Stack, Group, Image, Badge, Divider } from '@mantine/core';
+import { IconShoppingCart, IconPlus, IconMinus } from '@tabler/icons-react';
 import type { CartItem } from '../../types/product';
 import classes from './CartPopover.module.css';
 
@@ -8,6 +8,7 @@ interface CartPopoverProps {
   totalItems: number;
   totalPrice: number;
   onRemoveItem: (id: number) => void;
+  onQtyChange: (id: number, delta: number) => void;
 }
 
 export const CartPopover = ({
@@ -15,12 +16,25 @@ export const CartPopover = ({
   totalItems,
   totalPrice,
   onRemoveItem,
+  onQtyChange,
 }: CartPopoverProps) => {
   return (
-    <Popover position="bottom-end" shadow="md" width={320}>
+    <Popover position="bottom-end" shadow="md" width={340}>
       <Popover.Target>
-        <Button leftSection={<IconShoppingCart size={18} />} color="#54b46a" variant="filled">
-          Cart: {totalItems} items (${totalPrice})
+        <Button rightSection={<IconShoppingCart size={18} />} color="#54b46a" variant="filled">
+          <Group gap="xs" align="center">
+            <Badge
+              size="sm"
+              radius="xl"
+              color="white"
+              c="#54b46a"
+              fw={700}
+              className={classes.badgeCircle}
+            >
+              {totalItems}
+            </Badge>
+            <span>Cart</span>
+          </Group>
         </Button>
       </Popover.Target>
 
@@ -30,37 +44,84 @@ export const CartPopover = ({
             Your cart is empty!
           </Text>
         ) : (
-          <Stack gap="sm">
-            {cartItems.map(({ product, quantity }) => (
-              <Group key={product.id} justify="space-between">
-                <Group gap="xs">
-                  <Image src={product.image} w={30} h={30} radius="sm" alt={product.name} />
-                  <div>
-                    <Text size="sm" fw={500}>
-                      {product.name}
-                    </Text>
-                    <Text size="xs" c="dimmed">
-                      ${product.price} × {quantity}
-                    </Text>
-                  </div>
-                </Group>
+          <Stack gap="md">
+            <Stack gap="sm">
+              {cartItems.map(({ product, quantity }) => {
+                const [name, weight] = product.name.split('-');
+                const itemTotalPrice = product.price * quantity;
 
-                <Group gap={4}>
-                  <Text size="sm" className={classes.itemPrice}>
-                    ${product.price * quantity}
-                  </Text>
-                  <ActionIcon
-                    size="sm"
-                    color="red"
-                    variant="subtle"
-                    onClick={() => onRemoveItem(product.id)}
-                    aria-label={`Remove ${product.name}`}
-                  >
-                    <IconTrash size={14} />
-                  </ActionIcon>
-                </Group>
-              </Group>
-            ))}
+                return (
+                  <div key={product.id}>
+                    <Group justify="space-between" align="flex-start" wrap="nowrap">
+                      <Group gap="sm" wrap="nowrap">
+                        <Image src={product.image} w={45} h={45} fit="contain" alt={product.name} />
+                        <div>
+                          <Group gap="6" align="baseline">
+                            <Text size="sm" fw={700} c="dark">
+                              {name}
+                            </Text>
+                            {weight && (
+                              <Text size="xs" c="dimmed" fw={500}>
+                                {weight}
+                              </Text>
+                            )}
+                          </Group>
+                          <Text size="md" fw={700} c="dark" mt={2}>
+                            $ {itemTotalPrice}
+                          </Text>
+                        </div>
+                      </Group>
+
+                      <Group gap="4" align="center" mt={4}>
+                        <Badge
+                          variant="light"
+                          color="grey"
+                          c="dark"
+                          size="sm"
+                          radius="sm"
+                          className={classes.qtyBadge}
+                          onClick={() => {
+                            if (quantity === 1) {
+                              onRemoveItem(product.id);
+                            } else {
+                              onQtyChange(product.id, -1);
+                            }
+                          }}
+                        >
+                          <IconMinus size={10} stroke={3} />
+                        </Badge>
+
+                        <Text size="sm" fw={600} className={classes.quantityText}>
+                          {quantity}
+                        </Text>
+
+                        <Badge
+                          variant="light"
+                          color="grey"
+                          c="dark"
+                          size="sm"
+                          radius="sm"
+                          className={classes.qtyBadge}
+                          onClick={() => onQtyChange(product.id, 1)}
+                        >
+                          <IconPlus size={10} stroke={3} />
+                        </Badge>
+                      </Group>
+                    </Group>
+                    <Divider mt="sm" color="#e9ecef" />
+                  </div>
+                );
+              })}
+            </Stack>
+
+            <Group justify="space-between" align="center" pt={4}>
+              <Text size="md" fw={700} c="dark">
+                Total
+              </Text>
+              <Text size="lg" fw={700} c="dark">
+                $ {totalPrice}
+              </Text>
+            </Group>
           </Stack>
         )}
       </Popover.Dropdown>

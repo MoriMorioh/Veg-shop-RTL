@@ -3,18 +3,18 @@ import type { Product } from '../types/product';
 import { fetchProducts as fetchProductsApi } from '../api/products';
 
 interface ProductsState {
-    items: Product[];
-    loading: boolean;
-    error: string | null;
-    quantities: Record<number, number>;
+  items: Product[];
+  loading: boolean;
+  error: string | null;
+  quantities: Record<number, number>;
 }
 
 const initialState: ProductsState = {
-    items: [],
-    loading: false,
-    error: null,
-    quantities: {},
-} 
+  items: [],
+  loading: false,
+  error: null,
+  quantities: {},
+};
 
 export const fetchProducts = createAsyncThunk<Product[], void, { rejectValue: string }>(
   'products/fetchProducts',
@@ -25,17 +25,14 @@ export const fetchProducts = createAsyncThunk<Product[], void, { rejectValue: st
     } catch (error) {
       return rejectWithValue('Failed to fetch products');
     }
-  }
+  },
 );
 
 export const productsSlice = createSlice({
   name: 'products',
   initialState,
   reducers: {
-    setQuantity: (
-      state,
-      action: PayloadAction<{ id: number; delta: number }>
-    ) => {
+    setQuantity: (state, action: PayloadAction<{ id: number; delta: number }>) => {
       const { id, delta } = action.payload;
       const currentQty = state.quantities[id] ?? 1;
       state.quantities[id] = Math.max(1, currentQty + delta);

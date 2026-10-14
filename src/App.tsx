@@ -3,7 +3,7 @@ import { MantineProvider, Container } from '@mantine/core';
 import { Provider } from 'react-redux';
 import { store, useAppDispatch, useAppSelector } from './store/store';
 import { fetchProducts, setQuantity } from './store/productsSlice';
-import { addToCart, removeFromCart } from './store/cartSlice';
+import { addToCart, removeFromCart, updateCartQuantity } from './store/cartSlice';
 import { Header } from './components/Header/Header';
 import { ProductGrid } from './components/ProductGrid/ProductGrid';
 import type { Product } from './types/product';
@@ -11,7 +11,6 @@ import classes from './App.module.css';
 import '@mantine/core/styles.css';
 
 export function VegetableShopContent() {
-
   const dispatch = useAppDispatch();
   const { items: products, loading, quantities } = useAppSelector((state) => state.products);
   const cartItemsMap = useAppSelector((state) => state.cart.items);
@@ -33,12 +32,15 @@ export function VegetableShopContent() {
     dispatch(removeFromCart(id));
   };
 
+  const handleCartQtyChange = (id: number, delta: number) => {
+    const currentQty = cartItemsMap[id]?.quantity || 1;
+    const newQty = currentQty + delta;
+    dispatch(updateCartQuantity({ id, quantity: newQty }));
+  };
+
   const cartList = Object.values(cartItemsMap);
   const totalItems = cartList.reduce((sum, item) => sum + item.quantity, 0);
-  const totalPrice = cartList.reduce(
-    (sum, item) => sum + item.product.price * item.quantity,
-    0
-  );
+  const totalPrice = cartList.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
 
   return (
     <div className={classes.wrapper}>
@@ -47,6 +49,7 @@ export function VegetableShopContent() {
         totalItems={totalItems}
         totalPrice={totalPrice}
         onRemoveItem={handleRemoveFromCart}
+        onQtyChange={handleCartQtyChange}
       />
 
       <Container size="lg" py="xl">

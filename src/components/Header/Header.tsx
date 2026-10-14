@@ -8,9 +8,16 @@ interface HeaderProps {
   totalItems: number;
   totalPrice: number;
   onRemoveItem: (id: number) => void;
+  onQtyChange: (id: number, delta: number) => void;
 }
 
-export const Header = ({ cartItems, totalItems, totalPrice, onRemoveItem }: HeaderProps) => {
+export const Header = ({
+  cartItems,
+  totalItems,
+  totalPrice,
+  onRemoveItem,
+  onQtyChange,
+}: HeaderProps) => {
   return (
     <header className={classes.header}>
       <Group justify="space-between" align="center" className={classes.container}>
@@ -26,6 +33,7 @@ export const Header = ({ cartItems, totalItems, totalPrice, onRemoveItem }: Head
           totalItems={totalItems}
           totalPrice={totalPrice}
           onRemoveItem={onRemoveItem}
+          onQtyChange={onQtyChange}
         />
       </Group>
     </header>

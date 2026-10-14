@@ -81,23 +81,21 @@ describe('Магазин овощей. Тесты', () => {
   });
 
   it('6. Корректно добавляет в корзину несколько единиц одного товара', async () => {
-  render(<App />);
+    render(<App />);
 
-  const broccoli = await screen.findByText(/Broccoli/i);
-  const card = (broccoli.closest('.mantine-Card-root') || broccoli.parentElement) as HTMLElement;
+    const broccoli = await screen.findByText(/Broccoli/i);
+    const card = (broccoli.closest('.mantine-Card-root') || broccoli.parentElement) as HTMLElement;
 
-  const plusBadge = within(card).getByLabelText('Increase quantity');
-  const addToCartBtn = within(card).getByRole('button', { name: /Add to cart/i });
+    const plusBadge = within(card).getByLabelText('Increase quantity');
+    const addToCartBtn = within(card).getByRole('button', { name: /Add to cart/i });
 
-  
-  fireEvent.click(plusBadge);
-  fireEvent.click(plusBadge);
-  expect(within(card).getByText('3')).toBeInTheDocument();
+    fireEvent.click(plusBadge);
+    fireEvent.click(plusBadge);
+    expect(within(card).getByText('3')).toBeInTheDocument();
 
+    fireEvent.click(addToCartBtn);
 
-  fireEvent.click(addToCartBtn);
-
-  const cartButton = await screen.findByText(/Cart: 3 items \(\$360\)/i);
-  expect(cartButton).toBeInTheDocument();
-});
+    const cartButton = await screen.findByText(/Cart: 3 items \(\$360\)/i);
+    expect(cartButton).toBeInTheDocument();
+  });
 });
