@@ -2,6 +2,7 @@ import { Popover, Button, Text, Stack, Group, Image, Badge, Divider } from '@man
 import { IconShoppingCart, IconPlus, IconMinus } from '@tabler/icons-react';
 import type { CartItem } from '../../types/product';
 import classes from './CartPopover.module.css';
+import Cart from '../../public/cart_empty.svg'
 
 interface CartPopoverProps {
   cartItems: CartItem[];
@@ -11,6 +12,7 @@ interface CartPopoverProps {
   onQtyChange: (id: number, delta: number) => void;
 }
 
+
 export const CartPopover = ({
   cartItems,
   totalItems,
@@ -19,9 +21,10 @@ export const CartPopover = ({
   onQtyChange,
 }: CartPopoverProps) => {
   return (
-    <Popover position="bottom-end" shadow="md" width={340}>
+    <Popover position="bottom-end" shadow="md" width={300}>
       <Popover.Target>
         <Button rightSection={<IconShoppingCart size={18} />} color="#54b46a" variant="filled">
+        {totalItems > 0 ? (
           <Group gap="xs" align="center">
             <Badge
               size="sm"
@@ -35,14 +38,20 @@ export const CartPopover = ({
             </Badge>
             <span>Cart</span>
           </Group>
+          ) : (
+          <span>Cart</span>
+        )}
         </Button>
       </Popover.Target>
-
-      <Popover.Dropdown>
+      
+      <Popover.Dropdown className={classes.popover}>
         {cartItems.length === 0 ? (
-          <Text c="dimmed" className={classes.emptyText}>
-            Your cart is empty!
-          </Text>
+          <div>
+            <img src={Cart}/>
+            <Text c="dimmed" className={classes.emptyText}>
+              Your cart is empty!
+            </Text>
+          </div>
         ) : (
           <Stack gap="md">
             <Stack gap="sm">
